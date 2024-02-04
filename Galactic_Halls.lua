@@ -32,7 +32,8 @@ local ID = {
     SEREN = 25552,
     JUNA = 25553,
     SWORD_OF_EDICTS = 25554,
-    CRES = 25555
+    CRES = 25555,
+    KNOWLEDGE_FRAGMENT = 25564
 }
 
 local function findNpc(npcID, distance)
@@ -47,17 +48,18 @@ local function CoreMemoryCheck()
         { ID = ID.JUNA },
         { ID = ID.SWORD_OF_EDICTS },
         { ID = ID.CRES },
+        { ID = ID.KNOWLEDGE_FRAGMENT },
     }
 
     for _, npc in ipairs(npcData) do
-        if findNpc(npc.ID, 75) and API.InvItemcount_1(42900) < 28 then
+        if findNpc(npc.ID, 75) and API.InvItemcount_1(42900) < 28 and (API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1) then
             DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, { npc.ID }, 75)
             API.WaitUntilMovingandAnimEnds()
             API.RandomSleep2(2000, 1000, 1000)
             return true
         end
-        return false
     end
+    return false
 end
 
 -- Rounds a number to the nearest integer or to a specified number of decimal places.
@@ -172,29 +174,18 @@ end
 
 
 
-function StartTwoTicking()
-    while API.ReadPlayerAnim() ~= 0 do
-        API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 2)
-        API.RandomSleep2(1200, 1200, 1200)
-        drawGUI()
-    end
-end
-
 function FillJars()
     if not CoreMemoryCheck() then
         API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 74)
         API.RandomSleep2(2000, 1500, 2000)
-        API.WaitUntilMovingEnds()
-        drawGUI()
+        API.WaitUntilMovingandAnimEnds()
         API.RandomSleep2(2000, 1500, 2000)
-        StartTwoTicking()
     end
 end
 
 function GrabJars()
     API.DoAction_Tile(WPOINT.new(2229, 9116, 0))
     API.WaitUntilMovingEnds()
-    drawGUI()
     API.RandomSleep2(1000, 1500, 2000)
     API.DoAction_Object_r(0x29, 0, { 111374 }, 70, WPOINT.new(2230, 9116, 0), 74)
 
@@ -203,7 +194,6 @@ function GrabJars()
     end
 
     print("Got Jars, time to gather some shit")
-    drawGUI()
 end
 
 function DepositJars()
@@ -239,11 +229,11 @@ do -----------------------------------------------------------------------------
     idleCheck()
     drawGUI()
     printProgressReport()
+    CoreMemoryCheck()
 
 
     if API.InvFull_() then
         if (API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1) then
-            CoreMemoryCheck()
             FillJars()
         elseif API.InvItemcount_1(42900) >= 2 then
             DepositJars()
