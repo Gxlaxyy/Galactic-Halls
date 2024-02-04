@@ -1,7 +1,7 @@
 --[[
 # Script Name:  <Galactic Halls>
 # Description:  <Hall of Memories Divination, Picks up Jars and fills, then hands in once filled.>
-# Version:      <2.0>
+# Version:      <2.3>
 # Datum:        <2024.02.04>
 # Author:       <Unknown- Edits/changes made by Disc - Gxlaxy>
 
@@ -11,6 +11,7 @@
 > Offsets updated to work with current versions.
 > Added a GUI to track xp.
 > NOTE - I DID NOT CREATE THIS SCRIPT JUST EDITED, CHANGED, AND ADDED FUNCTIONS TO THE ORIGNAL CREATORS VERSION (Unknown)
+> Added in Knowledge Fragments - Thanks to Knetterbal for this
 --]]
 
 print("Run Galactic Hall of Memories.")
