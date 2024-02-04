@@ -158,9 +158,6 @@ function GrabJars()
     end
     
     print("Got Jars, time to gather some shit")
-
-    API.DoAction_Tile(WPOINT.new(2223, 9117,0 ))
-    API.WaitUntilMovingEnds()
     drawGUI()
 end
 
