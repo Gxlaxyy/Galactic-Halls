@@ -1,7 +1,7 @@
 --[[
 # Script Name:  <Galactic Halls>
 # Description:  <Hall of Memories Divination, Picks up Jars and fills, then hands in once filled.>
-# Version:      <2.0>
+# Version:      <3.0>
 # Datum:        <2024.02.04>
 # Author:       <Unknown- Edits/changes made by Disc - Gxlaxy>
 
