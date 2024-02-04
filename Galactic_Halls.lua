@@ -228,16 +228,36 @@ do -----------------------------------------------------------------------------
     drawGUI()
     printProgressReport()
 
+    function StartTwoTicking()
+        while API.ReadPlayerAnim() ~= 0 do
+            API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 2)
+            API.RandomSleep2(1200, 1200, 1200)
+            drawGUI()
+        end
+    end
+    
+    function FillJars()
+        if not CoreMemoryCheck() then
+        API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 74)
+        API.RandomSleep2(2000, 1500, 2000)
+        API.WaitUntilMovingEnds()
+        drawGUI()
+        API.RandomSleep2(2000, 1500, 2000)
+        StartTwoTicking()
+        end
+    end
+
     if API.InvFull_() then
-        if API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1 then
-            CoreMemoryCheck()
+        CoreMemoryCheck()
+        if (API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1) and not CoreMemoryCheck() then
             FillJars()
         elseif API.InvItemcount_1(42900) >= 2 then
             DepositJars()
         end
     else
+        
         GrabJars()
     end
-end ----------------------------------------------------------------------------------
+end 
 
 print("Entering the Black Hole - Buh bye")
