@@ -24,6 +24,9 @@ ScripCuRunning1 = ""
 local startXp = API.GetSkillXP("DIVINATION")
 local skill = "DIVINATION"
 local currentlvl = API.XPLevelTable(API.GetSkillXP(skill))
+
+
+
 local ID = {
     AAGI = 25551,
     SEREN = 25552,
@@ -47,13 +50,14 @@ local function CoreMemoryCheck()
     }
 
     for _, npc in ipairs(npcData) do
-        if DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, { npc.ID }, 75) then
+        if findNpc(npc.ID, 75) and API.InvItemcount_1(42900) < 28 then
+            DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, { npc.ID }, 75)
             API.WaitUntilMovingandAnimEnds()
             API.RandomSleep2(2000, 1000, 1000)
             return true
         end
+        return false
     end
-    return false
 end
 
 -- Rounds a number to the nearest integer or to a specified number of decimal places.
@@ -122,7 +126,13 @@ local function printProgressReport(final)
     IGP.string_value = time ..
         " | " ..
         string.lower(skill):gsub("^%l", string.upper) ..
-        ": " .. currentLevel .. " | XP/H: " .. formatNumber(xpPH) .. " | XP: " .. formatNumber(diffXp) .. " | TTL: " .. formatNumber(timeNeeded) .. "m" .. " | TTL99: " .. formatNumber(timeneededfor99) .. "m"
+        ": " ..
+        currentLevel ..
+        " | XP/H: " ..
+        formatNumber(xpPH) ..
+        " | XP: " ..
+        formatNumber(diffXp) ..
+        " | TTL: " .. formatNumber(timeNeeded) .. "m" .. " | TTL99: " .. formatNumber(timeneededfor99) .. "m"
 end
 
 local function setupGUI()
@@ -137,10 +147,12 @@ function drawGUI()
     DrawProgressBar(IGP)
 end
 
-local Cselect = API.ScriptDialogWindow2("Hall Of Memories",{  "Faded memories", "Lustrous memories", "Brilliant memories", "Radiant memories", "Luminous memories", "Incandescent memories"  },"Start", "Close").Name
+local Cselect = API.ScriptDialogWindow2("Hall Of Memories",
+    { "Faded memories", "Lustrous memories", "Brilliant memories", "Radiant memories", "Luminous memories",
+        "Incandescent memories" }, "Start", "Close").Name
 if Cselect == "Faded memories" then
     print(Cselect)
-    ScripCuRunning1 = "Faded memories" 
+    ScripCuRunning1 = "Faded memories"
 elseif Cselect == "Lustrous memories" then
     print(Cselect)
     ScripCuRunning1 = "Lustrous memories"
@@ -170,35 +182,35 @@ end
 
 function FillJars()
     if not CoreMemoryCheck() then
-    API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 74)
-    API.RandomSleep2(2000, 1500, 2000)
-    API.WaitUntilMovingEnds()
-    drawGUI()
-    API.RandomSleep2(2000, 1500, 2000)
-    StartTwoTicking()
+        API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 74)
+        API.RandomSleep2(2000, 1500, 2000)
+        API.WaitUntilMovingEnds()
+        drawGUI()
+        API.RandomSleep2(2000, 1500, 2000)
+        StartTwoTicking()
     end
 end
 
 function GrabJars()
-    API.DoAction_Tile(WPOINT.new( 2229, 9116,0 ))
+    API.DoAction_Tile(WPOINT.new(2229, 9116, 0))
     API.WaitUntilMovingEnds()
     drawGUI()
     API.RandomSleep2(1000, 1500, 2000)
-    API.DoAction_Object_r(0x29, 0, { 111374 },70, WPOINT.new(2230, 9116,0),  74)
-    
+    API.DoAction_Object_r(0x29, 0, { 111374 }, 70, WPOINT.new(2230, 9116, 0), 74)
+
     while not API.InvFull_() do
         API.RandomSleep2(200, 200, 200)
     end
-    
+
     print("Got Jars, time to gather some shit")
     drawGUI()
 end
 
 function DepositJars()
-    API.DoAction_Tile(WPOINT.new(2207, 9120,0 ))
+    API.DoAction_Tile(WPOINT.new(2207, 9120, 0))
     API.WaitUntilMovingEnds()
     API.RandomSleep2(2000, 1000, 1000)
-    API.DoAction_Object_r(0x29, 0, { 111375 },74, WPOINT.new( 2204, 9134,0 ),  74)
+    API.DoAction_Object_r(0x29, 0, { 111375 }, 74, WPOINT.new(2204, 9134, 0), 74)
     API.RandomSleep2(2000, 1000, 1000)
     API.WaitUntilMovingEnds()
     drawGUI()
@@ -207,7 +219,7 @@ function DepositJars()
     end
 end
 
-local function idleCheck()  -- Thanks to Higgins for this Function
+local function idleCheck() -- Thanks to Higgins for this Function
     local timeDiff = os.difftime(os.time(), afk)
     local randomTime = math.random((MAX_IDLE_TIME_MINUTES * 60) * 0.6, (MAX_IDLE_TIME_MINUTES * 60) * 0.9)
 
@@ -228,36 +240,17 @@ do -----------------------------------------------------------------------------
     drawGUI()
     printProgressReport()
 
-    function StartTwoTicking()
-        while API.ReadPlayerAnim() ~= 0 do
-            API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 2)
-            API.RandomSleep2(1200, 1200, 1200)
-            drawGUI()
-        end
-    end
-    
-    function FillJars()
-        if not CoreMemoryCheck() then
-        API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 74)
-        API.RandomSleep2(2000, 1500, 2000)
-        API.WaitUntilMovingEnds()
-        drawGUI()
-        API.RandomSleep2(2000, 1500, 2000)
-        StartTwoTicking()
-        end
-    end
 
     if API.InvFull_() then
-        CoreMemoryCheck()
-        if (API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1) and not CoreMemoryCheck() then
+        if (API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1) then
+            CoreMemoryCheck()
             FillJars()
         elseif API.InvItemcount_1(42900) >= 2 then
             DepositJars()
         end
     else
-        
         GrabJars()
     end
-end 
+end ----------------------------------------------------------------------------------
 
 print("Entering the Black Hole - Buh bye")
