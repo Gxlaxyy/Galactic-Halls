@@ -169,12 +169,14 @@ function StartTwoTicking()
 end
 
 function FillJars()
+    if not CoreMemoryCheck() then
     API.DoAction_NPC_str(0xc8, 1488, { ScripCuRunning1 }, 74)
     API.RandomSleep2(2000, 1500, 2000)
     API.WaitUntilMovingEnds()
     drawGUI()
     API.RandomSleep2(2000, 1500, 2000)
     StartTwoTicking()
+    end
 end
 
 function GrabJars()
