@@ -1,7 +1,7 @@
 --[[
 # Script Name:  <Galactic Halls>
 # Description:  <Hall of Memories Divination, Picks up Jars and fills, then hands in once filled.>
-# Version:      <3.0>
+# Version:      <2.0>
 # Datum:        <2024.02.04>
 # Author:       <Unknown- Edits/changes made by Disc - Gxlaxy>
 
@@ -10,7 +10,6 @@
 > Updated doactions in Several lines to updated Id changes.
 > Offsets updated to work with current versions.
 > Added a GUI to track xp.
-> Added in the use of the Memory Bud in the centre - Another thanks to Higgins for the functions for this, as well as Knetterbal for the assist.
 > NOTE - I DID NOT CREATE THIS SCRIPT JUST EDITED, CHANGED, AND ADDED FUNCTIONS TO THE ORIGNAL CREATORS VERSION (Unknown)
 --]]
 
@@ -48,13 +47,13 @@ local function CoreMemoryCheck()
     }
 
     for _, npc in ipairs(npcData) do
-        if findNpc(npc.ID, 75) then
-            API.DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, { npc.ID }, 75)
+        if DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, { npc.ID }, 75) then
             API.WaitUntilMovingandAnimEnds()
             API.RandomSleep2(2000, 1000, 1000)
-            break
+            return true
         end
     end
+    return false
 end
 
 -- Rounds a number to the nearest integer or to a specified number of decimal places.
