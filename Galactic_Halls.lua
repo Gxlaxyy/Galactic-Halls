@@ -10,6 +10,7 @@
 > Updated doactions in Several lines to updated Id changes.
 > Offsets updated to work with current versions.
 > Added a GUI to track xp.
+> Added in the use of the Memory Bud in the centre - Another thanks to Higgins for the functions for this, as well as Knetterbal for the assist.
 > NOTE - I DID NOT CREATE THIS SCRIPT JUST EDITED, CHANGED, AND ADDED FUNCTIONS TO THE ORIGNAL CREATORS VERSION (Unknown)
 --]]
 
@@ -24,6 +25,37 @@ ScripCuRunning1 = ""
 local startXp = API.GetSkillXP("DIVINATION")
 local skill = "DIVINATION"
 local currentlvl = API.XPLevelTable(API.GetSkillXP(skill))
+local ID = {
+    AAGI = 25551,
+    SEREN = 25552,
+    JUNA = 25553,
+    SWORD_OF_EDICTS = 25554,
+    CRES = 25555
+}
+
+local function findNpc(npcID, distance)
+    distance = distance or 25
+    return #API.GetAllObjArrayInteract({ npcID }, distance, 1) > 0
+end
+
+local function CoreMemoryCheck()
+    local npcData = {
+        { ID = ID.AAGI },
+        { ID = ID.SEREN },
+        { ID = ID.JUNA },
+        { ID = ID.SWORD_OF_EDICTS },
+        { ID = ID.CRES },
+    }
+
+    for _, npc in ipairs(npcData) do
+        if findNpc(npc.ID, 75) then
+            API.DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, { npc.ID }, 75)
+            API.WaitUntilMovingandAnimEnds()
+            API.RandomSleep2(2000, 1000, 1000)
+            break
+        end
+    end
+end
 
 -- Rounds a number to the nearest integer or to a specified number of decimal places.
 local function round(val, decimal)
@@ -189,14 +221,15 @@ end
 
 API.Write_LoopyLoop(1)
 setupGUI()
-while(API.Read_LoopyLoop())
-do-----------------------------------------------------------------------------------
+while (API.Read_LoopyLoop())
+do -----------------------------------------------------------------------------------
     idleCheck()
     drawGUI()
     printProgressReport()
-    
+
     if API.InvFull_() then
         if API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1 then
+            CoreMemoryCheck()
             FillJars()
         elseif API.InvItemcount_1(42900) >= 2 then
             DepositJars()
@@ -204,7 +237,6 @@ do------------------------------------------------------------------------------
     else
         GrabJars()
     end
-
-end----------------------------------------------------------------------------------
+end ----------------------------------------------------------------------------------
 
 print("Entering the Black Hole - Buh bye")
