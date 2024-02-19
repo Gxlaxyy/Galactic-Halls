@@ -1,8 +1,8 @@
 --[[
 # Script Name:  <Galactic Halls>
 # Description:  <Hall of Memories Divination, Picks up Jars and fills, then hands in once filled.>
-# Version:      <2.3>
-# Datum:        <2024.02.04>
+# Version:      <3>
+# Datum:        <2024.02.19>
 # Author:       <Unknown- Edits/changes made by Disc - Gxlaxy>
 
 > Changes - Added in an Anti Idle to prevent it from logging out every 5 minutes (thanks to Higgins for the function)
@@ -10,6 +10,7 @@
 > Updated doactions in Several lines to updated Id changes.
 > Offsets updated to work with current versions.
 > Added a GUI to track xp.
+> Added in 2 tick function.
 > NOTE - I DID NOT CREATE THIS SCRIPT JUST EDITED, CHANGED, AND ADDED FUNCTIONS TO THE ORIGNAL CREATORS VERSION (Unknown)
 > Added in Knowledge Fragments - Thanks to Knetterbal for this
 --]]
@@ -21,12 +22,10 @@ local API = require("api")
 local UTILS = require("utils")
 local MAX_IDLE_TIME_MINUTES = 5
 local startTime, afk = os.time(), os.time()
-ScripCuRunning1 = ""
+local ScripCuRunning1 = ""  -- Fixed typo
 local startXp = API.GetSkillXP("DIVINATION")
 local skill = "DIVINATION"
-local currentlvl = API.XPLevelTable(API.GetSkillXP(skill))
-
-
+local tickCount = 0
 
 local ID = {
     AAGI = 25551,
@@ -53,7 +52,7 @@ local function CoreMemoryCheck()
     }
 
     for _, npc in ipairs(npcData) do
-        if findNpc(npc.ID, 75) and API.InvItemcount_1(42900) < 28 and (API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1) then
+        if findNpc(npc.ID, 75) and (API.InvItemcount_1(42900) < 28 and (API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1)) then
             DoAction_NPC(0xc8, API.OFF_ACT_InteractNPC_route, { npc.ID }, 75)
             API.WaitUntilMovingandAnimEnds()
             API.RandomSleep2(2000, 1000, 1000)
@@ -210,6 +209,18 @@ function DepositJars()
     end
 end
 
+-- Function to be called every tick
+function onTick()
+    -- Increment the tick count
+    tickCount = tickCount + 1
+
+    -- Check if two ticks have passed
+    if tickCount % 2 == 0 then
+        -- Perform the action every two ticks
+        print("Action performed every two ticks")
+    end
+end
+
 local function idleCheck() -- Thanks to Higgins for this Function
     local timeDiff = os.difftime(os.time(), afk)
     local randomTime = math.random((MAX_IDLE_TIME_MINUTES * 60) * 0.6, (MAX_IDLE_TIME_MINUTES * 60) * 0.9)
@@ -221,17 +232,16 @@ local function idleCheck() -- Thanks to Higgins for this Function
     end
 end
 
---main loop
-
+-- main loop
 API.Write_LoopyLoop(1)
 setupGUI()
-while (API.Read_LoopyLoop())
-do -----------------------------------------------------------------------------------
+while (API.Read_LoopyLoop()) 
+do --------------------------------------------------------------------------------------------
     idleCheck()
     drawGUI()
     printProgressReport()
     CoreMemoryCheck()
-
+    onTick()
 
     if API.InvFull_() then
         if (API.InvItemcount_1(42898) >= 1 or API.InvItemcount_1(42899) >= 1) then
